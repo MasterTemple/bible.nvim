@@ -11,11 +11,10 @@
 ```lua
 {
 	"MasterTemple/bible.nvim",
-	lazy = false,
-	config = function()
-		require("telescope").load_extension "bible"
-		require("telescope").load_extension "bible_ref"
-	end,
+	keys = {
+		{"<leader>es", '<cmd>lua require("telescope").load_extension("bible")\n<cmd>Telescope bible<CR>', desc = "Search by verse content" },
+		{"<leader>er", '<cmd>lua require("telescope").load_extension("bible_ref")\n<cmd>Telescope bible_ref<CR>', desc = "Search by verse reference" },
+	}
 },
 ```
 
@@ -29,10 +28,9 @@ Hit `Enter` to insert the content and the reference in the lines beneath your cu
 
 ## Mappings
 
-```lua
-["<leader>es"] = { '<cmd>Telescope bible<CR>', "Search by verse content" },
-["<leader>er"] = { '<cmd>Telescope bible_ref<CR>', "Search by verse reference" },
-```
+`<leader>es`: Search by verse content
+
+`<leader>er`: Search by verse reference
 
 ## Todo
 
