@@ -36,12 +36,12 @@ Hit `Enter` to insert the content and the reference in the lines beneath your cu
 
 ## Todo
 
-- Fix path issues
 - Properly lazy load plugin
 - Allow user to specify format in setup like: `"{content} [{ref}]"` (options = `book`, `chapter`, `verse`, `ref`, `content`)
-- Allow support for more translations (currently only ESV)
-- Multi-verse selection
+- Add proper indentation
 - Insert verse content by matching references on current line
 - Take what is highlighted as input for Telescope
-- Add option regarding removing newlines/tabs
 - Add option to remove unicode apostrophes/quotes
+- Add option regarding removing newlines/tabs
+- Multi-verse selection
+- Allow support for more translations (currently only ESV)

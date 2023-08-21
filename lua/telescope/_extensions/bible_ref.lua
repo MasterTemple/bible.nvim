@@ -10,7 +10,6 @@ M.bible_ref = function(opts)
 	versePicker(opts, results)
 end
 
-
 return telescope.register_extension({
 	exports = M
 })

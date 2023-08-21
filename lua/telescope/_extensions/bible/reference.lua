@@ -1,14 +1,15 @@
 local sqlite3 = require("lsqlite3")
-local db = sqlite3.open("/home/dglinuxtemple/ESV.sqlite")
+local config = require("telescope._extensions.bible.config")
+local db = sqlite3.open(config.code_dir .. "db/ESV.sqlite")
 
 local json = require("dkjson")
 
-local file = io.open("/home/dglinuxtemple/references.json", "r")
+local file = io.open(config.code_dir .. "references.json", "r")
 local json_string = file:read("*a")
 file:close()
 local referenceTable = json.decode(json_string)
 
-file = io.open("/home/dglinuxtemple/books.json", "r")
+file = io.open(config.code_dir .. "books.json", "r")
 json_string = file:read("*a")
 file:close()
 local bookList = json.decode(json_string)
