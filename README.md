@@ -38,5 +38,8 @@ Hit `Enter` to insert the content and the reference in the lines beneath your cu
 
 - Fix path issues
 - Properly lazy load plugin
-- Allow user to specify format in setup like: `"{content} [{ref}]"`
+- Allow user to specify format in setup like: `"{content} [{ref}]"` (options = `book`, `chapter`, `verse`, `ref`, `content`)
 - Allow support for more translations (currently only ESV)
+- Multi-verse selection
+- Insert verse content by matching references on current line
+- Take what is highlighted as input for Telescope
