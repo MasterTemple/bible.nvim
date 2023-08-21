@@ -3,12 +3,12 @@ local db = sqlite3.open("/home/dglinuxtemple/ESV.sqlite")
 
 local json = require("dkjson")
 
-local file = io.open("./references.json", "r")
+local file = io.open("/home/dglinuxtemple/references.json", "r")
 local json_string = file:read("*a")
 file:close()
 local referenceTable = json.decode(json_string)
 
-file = io.open("./books.json", "r")
+file = io.open("/home/dglinuxtemple/books.json", "r")
 json_string = file:read("*a")
 file:close()
 local bookList = json.decode(json_string)
@@ -19,11 +19,20 @@ function Reference:new(bk, ch, v)
 	local instance = {}
 	setmetatable(instance, { __index = Reference, __tostring = Reference.__tostring, __concat = Reference.__concat })
 	instance.bk = bk
-	instance.ch = ch
-	instance.v = v
+	instance.ch = tonumber(ch)
+	instance.v = tonumber(v)
 	instance.isValid = instance:checkValidity()
 	instance.content = instance:get()
 	return instance
+end
+
+function Reference:from_string(str)
+	-- this is a simple match for a verse, it wont work for a lot of use cases
+	local pattern = "(%d? ?[%a%s]+) (%d+):(%d+)"
+  local book, chapter, verse = str:match(pattern)
+  if book and chapter and verse then
+    return Reference:new(book, tonumber(chapter), tonumber(verse))
+  end
 end
 
 function Reference:get()
@@ -93,8 +102,10 @@ function Reference:prev()
 			break
 		end
 	end
-
-	local lastChapter = #referenceTable[prevBook]
+	if prevBook == nil then
+		return nil
+	end
+	local lastChapter = #(referenceTable[prevBook])
 	lastVerse = referenceTable[prevBook][lastChapter]
 	ref = Reference:new(prevBook, lastChapter, lastVerse)
 	if ref.isValid then
@@ -137,7 +148,13 @@ function Reference:ref()
 end
 
 function Reference:print()
-	return self.content .. " [" .. self:ref() .. "]"
+	-- return self.content .. " [" .. self:ref() .. "]"
+	return "[" .. self:ref() .. "] " .. self.content 
+end
+
+function Reference:verseLine()
+	return  " [" .. self.ch .. ":" .. self.v .. "] " .. self.content:gsub("\n", " ")
+	-- return  " [" .. self.v .. "] " .. self.content:gsub("\n", " ")
 end
 
 function Reference:__tostring()
@@ -162,3 +179,8 @@ return Reference
 -- for i,v in ipairs(x) do
 -- 	print(v:fmt())
 -- end
+-- local ref = Reference:from_string("song of songs 1:1")
+-- print(ref)
+-- print(ref.bk)
+-- print(ref.ch)
+-- print(ref.v)
