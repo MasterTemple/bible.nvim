@@ -43,3 +43,5 @@ Hit `Enter` to insert the content and the reference in the lines beneath your cu
 - Multi-verse selection
 - Insert verse content by matching references on current line
 - Take what is highlighted as input for Telescope
+- Add option regarding removing newlines/tabs
+- Add option to remove unicode apostrophes/quotes
