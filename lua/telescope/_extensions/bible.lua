@@ -5,28 +5,24 @@ local versePicker = require('telescope._extensions.bible.picker')
 local M = {}
 
 M.bible = function(opts)
-  opts = opts or {}
-	local results = searches:getAllVerses()
-	versePicker(opts, results)
-end
+	if opts == nil then
+		opts = {}
+	end
 
-M.bible_after = function(opts)
-  opts = opts or {}
-	local cur = tostring(opts.value)
-  local results = searches:getAllVersesAfter(cur)
-	versePicker(opts, results)
-end
+	opts.isReferenceOnly = opts.isReferenceOnly or false
+	opts.isMultiSelect = opts.isMultiSelect or false
+	opts.isSecondVerse = opts.isSecondVerse or false
 
-M.bible_ref = function(opts)
-  opts = opts or {}
-  local results = searches:getAllReferences()
-	versePicker(opts, results)
-end
-
-M.bible_ref_after = function(opts)
-  opts = opts or {}
-	local cur = tostring(opts.value)
-  local results = searches:getAllReferencesAfter(cur)
+	local results
+	if(opts.isReferenceOnly and opts.isSecondVerse) then
+		results = searches:getAllReferencesAfter(opts.value)
+	elseif(opts.isReferenceOnly) then
+		results = searches:getAllReferences()
+	elseif(not opts.isReferenceOnly and opts.isSecondVerse) then
+		results = searches:getAllVersesAfter(opts.value)
+	elseif(not opts.isReferenceOnly) then
+		results = searches:getAllVerses()
+	end
 	versePicker(opts, results)
 end
 
