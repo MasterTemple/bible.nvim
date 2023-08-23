@@ -20,16 +20,6 @@
 },
 ```
 
-## Usage
-
-Hit `Tab` or `Alt+R` to insert the reference
-
-Hit `Enter` to insert the content and the reference
-
-Hit `Alt+W` to insert the whole chapter
-
-Hit `Alt+M` to toggle multi-select (only works on if you are choosing your first verse)
-
 ## Mappings
 
 ### Explanation
@@ -44,7 +34,7 @@ These can be remapped in the config above.
 
 Prefix the operation with `m` to make it `m`ulti-select (choose a start and end verse)
 
-### Keybinds
+### Open Telescope Menu
 
 `<leader>es`: Search by verse content
 
@@ -54,16 +44,22 @@ Prefix the operation with `m` to make it `m`ulti-select (choose a start and end 
 
 `<leader>emr`: Search by verse reference (multi-select)
 
+### In Telescope Menu
 
+Hit `Enter` to insert the content and the reference
+
+Hit `Tab` or `Alt+R` to insert the reference
+
+Hit `Alt+W` to insert the whole chapter
+
+Hit `Alt+M` to toggle multi-select (only works on if you are choosing your first verse)
 
 ## Todo
-
-- Properly lazy load plugin
+- 
 - Allow user to specify format in setup like: `"{content} [{ref}]"` (options = `book`, `chapter`, `verse`, `ref`, `content`)
 - Add proper indentation
 - Insert verse content by matching references on current line
 - Take what is highlighted as input for Telescope
 - Add option to remove unicode apostrophes/quotes
 - Add option regarding removing newlines/tabs
-- Multi-verse selection
 - Allow support for more translations (currently only ESV)
