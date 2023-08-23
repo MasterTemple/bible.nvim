@@ -148,6 +148,15 @@ function Reference:ref()
 	return self.bk .. " " .. self.ch .. ":" .. self.v
 end
 
+function Reference:chRef()
+	return self.bk .. " " .. self.ch
+end
+
+function Reference:inlinePrint()
+	-- return self.content .. " [" .. self:ref() .. "]"
+	return "["  .. self.ch .. ":" .. self.v .. "] " .. self.content 
+end
+
 function Reference:print()
 	-- return self.content .. " [" .. self:ref() .. "]"
 	return "[" .. self:ref() .. "] " .. self.content 
