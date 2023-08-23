@@ -55,7 +55,7 @@ Hit `Alt+W` to insert the whole chapter
 Hit `Alt+M` to toggle multi-select (only works on if you are choosing your first verse)
 
 ## Todo
-- 
+
 - Allow user to specify format in setup like: `"{content} [{ref}]"` (options = `book`, `chapter`, `verse`, `ref`, `content`)
 - Add proper indentation
 - Insert verse content by matching references on current line

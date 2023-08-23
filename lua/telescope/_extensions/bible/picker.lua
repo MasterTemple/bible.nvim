@@ -69,7 +69,7 @@ local versePicker = function(opts, results)
 				end)
 
 				-- Alt+R prints the reference only
-				map("i", "<C-r>", function()
+				map("i", "<A-r>", function()
 					local selection = require("telescope.actions.state").get_selected_entry()
 					require("telescope.actions").close(prompt_bufnr)
 					local ref = Reference:from_string(selection.value)
@@ -77,7 +77,7 @@ local versePicker = function(opts, results)
 				end)
 
 				-- Alt+W prints whole chapter
-				map("i", "<C-w>", function()
+				map("i", "<A-w>", function()
 					local selection = require("telescope.actions.state").get_selected_entry()
 					require("telescope.actions").close(prompt_bufnr)
 					local ref = Reference:from_string(selection.value)
