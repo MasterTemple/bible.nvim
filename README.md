@@ -12,13 +12,11 @@
 {
 	"MasterTemple/bible.nvim",
 	keys = {
-		{"<leader>es", '<cmd>lua require("telescope").load_extension("bible")\n<cmd>Telescope bible<CR>', desc = "Search by verse content" },
-		{"<leader>er", '<cmd>lua require("telescope").load_extension("bible_ref")\n<cmd>Telescope bible_ref<CR>', desc = "Search by verse reference" },
+			{"<leader>es", '<cmd>lua require("telescope").extensions.bible.bible()<CR>', desc = "Search by verse content" },
+			{"<leader>er", '<cmd>lua require("telescope").extensions.bible.bible_ref()<CR>', desc = "Search by verse reference" },
 	}
 },
 ```
-
-Note: I haven't yet learned how to make everything lazy load
 
 ## Usage
 
