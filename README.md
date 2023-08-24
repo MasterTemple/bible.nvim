@@ -34,9 +34,9 @@ These can be remapped in the config above.
 
 Prefix the operation with `m` to make it `m`ulti-select (choose a start and end verse)
 
-`Alt+?` set an option but not run anything
+`Alt+?` set an option but does not run anything
 
-`Ctrl+?` runs on current selection
+`Ctrl+?` runs on the current selection
 
 ### Open Telescope Menu
 
@@ -48,15 +48,13 @@ Prefix the operation with `m` to make it `m`ulti-select (choose a start and end 
 
 `<leader>emr`: Search by verse reference (multi-select)
 
-`<leader>et`: Select translation (not implemented yet)
+`<leader>et`: Select Bible translation (not implemented yet) [global]
 
 ### In Telescope Menu
 
 Hit `Enter` to insert the content and the reference
 
 Hit `Ctrl+W` to insert the whole chapter
-
-Hit `Alt+M` to toggle multi-select [current selection]
 
 Hit `Alt+R` to toggle inserting reference [global: default = true]
 
@@ -66,14 +64,20 @@ Hit `Alt+I` to toggle adding indent [global: default = true]
 
 Hit `Alt+S` to toggle showing settings in preview [global: default = true]
 
+Hit `Alt+M` to toggle multi-select [current selection]
+
+Hit `Alt+T` to edit Bible translation (not implemented yet) [current selection]
+
 ## Todo
 
 - Add color highlighting to the preview window
 - Ctrl/Shift/Alt+Enter for easier bindings to insert in different formats
 - Dynamically size the preview window
 - Allow user to specify format in setup like: `"{content} [{ref}]"` (options = `book`, `chapter`, `verse`, `ref`, `content`)
-- Insert verse content by matching references on current line
+- Insert verse content by matching references on current line (by default set insertReference=false)
+	- handle `c:v-v`, `c:v-c:v`, `c:v,v`, and `c:v;c:v`
 - Take what is highlighted as input for Telescope
 - Add option to remove unicode apostrophes/quotes
 - Add option regarding removing newlines/tabs
 - Allow support for more translations (currently only ESV) + only download certain ones, not them all
+- make config options persist

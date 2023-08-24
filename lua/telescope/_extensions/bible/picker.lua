@@ -189,7 +189,6 @@ local versePicker = function(opts, results)
 
 				-- Alt+T change Bible translation
 				map("i", "<A-t>", function()
-					-- vim.g.showBibleSettings = not vim.g.showBibleSettings
 					vim.api.nvim_echo({{'This feature is in progress...'}}, false, {})
 					refreshPreview(prompt_bufnr)
 				end)
