@@ -4,10 +4,21 @@ local conf = require("telescope.config").values
 local createBiblePreviewer = require("telescope._extensions.bible.previewer")
 local Reference = require("telescope._extensions.bible.reference")
 
+
 local versePicker = function(opts, results)
 	local prompt_title = "Select Verse"
 	if(opts.value) then
 		prompt_title = "Select End Verse"
+	end
+
+	-- set indentation to proper value
+	local ind = vim.fn.getline('.'):match("^%s+")
+	local indent_type = vim.bo.expandtab and 'space' or 'tab'
+	if indent_type == 'space' then
+		local indent_size = vim.bo.shiftwidth
+		ind = ind .. string.rep(" ", indent_size) 
+	else
+		ind = ind .. "\t"
 	end
 
 	pickers
@@ -47,25 +58,22 @@ local versePicker = function(opts, results)
 						local endRef = Reference:from_string(selection.value)
 						local breakRef = endRef:next():ref()
 						local verses = {}
-						table.insert(verses, startRef:ref() .. " - " .. endRef:ref())
+						table.insert(verses, ind .. startRef:ref() .. " - " .. endRef:ref())
 						while startRef:ref() ~= breakRef do
-							table.insert(verses, startRef:inlinePrint())
+							-- table.insert(verses, startRef:inlinePrint())
+							table.insert(verses, ind .. startRef:inlinePrint())
 							startRef = startRef:next()
 						end
 						vim.api.nvim_put(verses, "l", true, false)
 
 					-- if is first and only value selected
 					else
-						vim.api.nvim_put({ ref.content, ref:ref() }, "l", true, false)
+						vim.api.nvim_put({ ind .. ref.content, ind .. ref:ref() }, "l", true, false)
 					end
 				end)
 
-				-- Tab prints the reference only
+				-- Tab [saving this for later]
 				map("i", "<tab>", function()
-					local selection = require("telescope.actions.state").get_selected_entry()
-					require("telescope.actions").close(prompt_bufnr)
-					local ref = Reference:from_string(selection.value)
-					vim.api.nvim_put({ ref:ref() }, "l", true, false)
 				end)
 
 				-- Alt+R prints the reference only
@@ -73,7 +81,7 @@ local versePicker = function(opts, results)
 					local selection = require("telescope.actions.state").get_selected_entry()
 					require("telescope.actions").close(prompt_bufnr)
 					local ref = Reference:from_string(selection.value)
-					vim.api.nvim_put({ ref:ref() }, "l", true, false)
+					vim.api.nvim_put({ ind .. ref:ref() }, "l", true, false)
 				end)
 
 				-- Alt+W prints whole chapter
@@ -83,9 +91,9 @@ local versePicker = function(opts, results)
 					local ref = Reference:from_string(selection.value)
 					local chapterReferences = ref:chapter()
 					local verses = {}
-					table.insert(verses, ref:chRef())
+					table.insert(verses, ind .. ref:chRef())
 					for _, v in ipairs(chapterReferences) do
-						table.insert(verses, v:inlinePrint())
+						table.insert(verses, ind .. v:inlinePrint())
 					end
 					vim.api.nvim_put(verses, "l", true, false)
 				end)

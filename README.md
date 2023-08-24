@@ -48,7 +48,9 @@ Prefix the operation with `m` to make it `m`ulti-select (choose a start and end 
 
 Hit `Enter` to insert the content and the reference
 
-Hit `Tab` or `Alt+R` to insert the reference
+Hit `Alt+R` to insert the reference only
+
+<!-- Hit `Alt+C` to insert the content only -->
 
 Hit `Alt+W` to insert the whole chapter
 
