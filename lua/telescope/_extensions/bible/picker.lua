@@ -77,6 +77,11 @@ local versePicker = function(opts, results)
 						value = entry,
 						ordinal = entry,
 						display = entry,
+						-- display = function(entry)
+						-- 	-- Highlight the line using the given highlight group.
+						-- 	vim.cmd('highlight ' .. "Statement" .. ' guifg=' .. entry)
+						-- 	return entry
+						-- end,
 					}
 				end,
 			}),
