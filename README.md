@@ -68,10 +68,12 @@ Hit `Alt+S` to toggle showing settings in preview [global: default = true]
 
 ## Todo
 
+- Add color highlighting to the preview window
+- Ctrl/Shift/Alt+Enter for easier bindings to insert in different formats
+- Dynamically size the preview window
 - Allow user to specify format in setup like: `"{content} [{ref}]"` (options = `book`, `chapter`, `verse`, `ref`, `content`)
-- Add proper indentation
 - Insert verse content by matching references on current line
 - Take what is highlighted as input for Telescope
 - Add option to remove unicode apostrophes/quotes
 - Add option regarding removing newlines/tabs
-- Allow support for more translations (currently only ESV)
+- Allow support for more translations (currently only ESV) + only download certain ones, not them all

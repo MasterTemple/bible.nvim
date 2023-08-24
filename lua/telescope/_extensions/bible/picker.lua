@@ -4,6 +4,11 @@ local conf = require("telescope.config").values
 local createBiblePreviewer = require("telescope._extensions.bible.previewer")
 local Reference = require("telescope._extensions.bible.reference")
 
+local refreshPreview = function(prompt_bufnr)
+	require('telescope.actions').move_selection_next(prompt_bufnr)
+	require('telescope.actions').move_selection_previous(prompt_bufnr)
+end
+
 local printVerses = function(opts, startVerse, endVerse)
 	-- set indentation to proper value
 	local ind = vim.fn.getline('.'):match("^%s+") or ""
@@ -151,30 +156,42 @@ local versePicker = function(opts, results)
 				map("i", "<A-m>", function()
 					opts.isMultiSelect = not opts.isMultiSelect
 					vim.api.nvim_echo({{'Multi-select = '.. tostring(opts.isMultiSelect)}}, false, {})
+					refreshPreview(prompt_bufnr)
 				end)
 
 				-- Alt+R toggles show reference [global]
 				map("i", "<A-r>", function()
 					vim.g.insertReference = not vim.g.insertReference
 					vim.api.nvim_echo({{'Insert Reference = '.. tostring(vim.g.insertReference)}}, false, {})
+					refreshPreview(prompt_bufnr)
 				end)
 
 				-- Alt+C toggles show content [global]
 				map("i", "<A-c>", function()
 					vim.g.insertContent = not vim.g.insertContent
 					vim.api.nvim_echo({{'Insert Content = '.. tostring(vim.g.insertContent)}}, false, {})
+					refreshPreview(prompt_bufnr)
 				end)
 
 				-- Alt+I toggles add indent [global]
 				map("i", "<A-i>", function()
 					vim.g.addIndent = not vim.g.addIndent
 					vim.api.nvim_echo({{'Add Indent = '.. tostring(vim.g.addIndent)}}, false, {})
+					refreshPreview(prompt_bufnr)
 				end)
 
 				-- Alt+S toggles settings in preview [global]
 				map("i", "<A-s>", function()
 					vim.g.showBibleSettings = not vim.g.showBibleSettings
 					vim.api.nvim_echo({{'Show Settings in Preview = '.. tostring(vim.g.showBibleSettings)}}, false, {})
+					refreshPreview(prompt_bufnr)
+				end)
+
+				-- Alt+T change Bible translation
+				map("i", "<A-t>", function()
+					-- vim.g.showBibleSettings = not vim.g.showBibleSettings
+					vim.api.nvim_echo({{'This feature is in progress...'}}, false, {})
+					refreshPreview(prompt_bufnr)
 				end)
 
 				return true

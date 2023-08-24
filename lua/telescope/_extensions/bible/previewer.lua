@@ -34,16 +34,16 @@ createBiblePreviewer = function(opts)
 				-- set color of [ch:v]
 				lines = {
 					"==============================================================================",
-					"Translation      = English Standard Version (ESV)",
-					"Insert Reference = " .. tostring(vim.g.insertReference),
-					"Insert Content   = " .. tostring(vim.g.insertContent),
-					"Add Indent       = " .. tostring(vim.g.addIndent),
+					"[Alt+T] Translation Used = English Standard Version (ESV)",
+					"[Alt+R] Insert Reference = " .. tostring(vim.g.insertReference),
+					"[Alt+C] Insert Content   = " .. tostring(vim.g.insertContent),
+					"[Alt+I] Add Indentation  = " .. tostring(vim.g.addIndent),
 					"==============================================================================",
 				}
 			end
 			local cur = ref
 			local context = 4
-			local width = 68 -- fix to make this dynamic
+			local width = 68 -- todo: fix to make this dynamic
 			local startLine
 			local endLine
 			for _=1,context do
