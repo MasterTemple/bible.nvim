@@ -4,13 +4,7 @@ local conf = require("telescope.config").values
 local createBiblePreviewer = require("telescope._extensions.bible.previewer")
 local Reference = require("telescope._extensions.bible.reference")
 
-
-local versePicker = function(opts, results)
-	local prompt_title = "Select Verse"
-	if(opts.value) then
-		prompt_title = "Select End Verse"
-	end
-
+local printVerses = function(opts, startVerse, endVerse)
 	-- set indentation to proper value
 	local ind = vim.fn.getline('.'):match("^%s+")
 	local indent_type = vim.bo.expandtab and 'space' or 'tab'
@@ -19,6 +13,51 @@ local versePicker = function(opts, results)
 		ind = ind .. string.rep(" ", indent_size) 
 	else
 		ind = ind .. "\t"
+	end
+
+	local startRef = Reference:from_string(startVerse)
+	if endVerse == nil then
+		endVerse = startVerse
+	end
+	-- endVerse = endVerse or startVerse
+	local endRef = Reference:from_string(endVerse)
+	local breakRef = endRef:next():ref()
+	local verses = {}
+	-- insert reference?
+	if opts.showReference then
+		local refString = startRef:ref()
+		-- same
+		if startRef:ref() == endRef:ref() then
+			refString = startRef:ref()
+		-- diff verse
+		elseif startRef.bk == endRef.bk and startRef.ch == endRef.ch then
+			refString = refString .. "-" .. endRef.v
+		-- diff chapter and verse
+		elseif startRef.bk == endRef.bk then
+			refString = refString .. "-" .. endRef.ch .. ":" .. endRef.v
+		-- diff book, chapter, and verse
+		else
+			refString = refString .. " - " .. endRef:ref()
+		end
+		table.insert(verses, ind .. refString)
+	end
+	-- insert all verses
+	if opts.showContent then
+		while startRef:ref() ~= breakRef do
+			-- table.insert(verses, startRef:inlinePrint())
+			table.insert(verses, ind .. startRef:inlinePrint())
+			startRef = startRef:next()
+		end
+	end
+	-- put all verses into buffer
+	vim.api.nvim_put(verses, "l", true, false)
+end
+
+
+local versePicker = function(opts, results)
+	local prompt_title = "Select Verse"
+	if(opts.value) then
+		prompt_title = "Select End Verse"
 	end
 
 	pickers
@@ -54,21 +93,10 @@ local versePicker = function(opts, results)
 
 					-- if second value is selected
 					if(opts.isSecondVerse) then
-						local startRef = Reference:from_string(opts.value)
-						local endRef = Reference:from_string(selection.value)
-						local breakRef = endRef:next():ref()
-						local verses = {}
-						table.insert(verses, ind .. startRef:ref() .. " - " .. endRef:ref())
-						while startRef:ref() ~= breakRef do
-							-- table.insert(verses, startRef:inlinePrint())
-							table.insert(verses, ind .. startRef:inlinePrint())
-							startRef = startRef:next()
-						end
-						vim.api.nvim_put(verses, "l", true, false)
-
+						printVerses(opts, opts.value, selection.value)
 					-- if is first and only value selected
 					else
-						vim.api.nvim_put({ ind .. ref.content, ind .. ref:ref() }, "l", true, false)
+						printVerses(opts, selection.value)
 					end
 				end)
 
@@ -76,32 +104,31 @@ local versePicker = function(opts, results)
 				map("i", "<tab>", function()
 				end)
 
-				-- Alt+R prints the reference only
-				map("i", "<A-r>", function()
-					local selection = require("telescope.actions.state").get_selected_entry()
-					require("telescope.actions").close(prompt_bufnr)
-					local ref = Reference:from_string(selection.value)
-					vim.api.nvim_put({ ind .. ref:ref() }, "l", true, false)
-				end)
-
-				-- Alt+W prints whole chapter
+				-- Ctrl+W prints whole chapter
 				map("i", "<A-w>", function()
 					local selection = require("telescope.actions.state").get_selected_entry()
 					require("telescope.actions").close(prompt_bufnr)
 					local ref = Reference:from_string(selection.value)
 					local chapterReferences = ref:chapter()
-					local verses = {}
-					table.insert(verses, ind .. ref:chRef())
-					for _, v in ipairs(chapterReferences) do
-						table.insert(verses, ind .. v:inlinePrint())
-					end
-					vim.api.nvim_put(verses, "l", true, false)
+					printVerses(opts, chapterReferences[1]:ref(), chapterReferences[#chapterReferences]:ref())
 				end)
 
 				-- Alt+M toggles multi-select
 				map("i", "<A-m>", function()
 					opts.isMultiSelect = not opts.isMultiSelect
 					vim.api.nvim_echo({{'Multi-select = '.. tostring(opts.isMultiSelect)}}, false, {})
+				end)
+
+				-- Alt+R toggles show reference
+				map("i", "<A-r>", function()
+					opts.showReference = not opts.showReference
+					vim.api.nvim_echo({{'Show Reference = '.. tostring(opts.showReference)}}, false, {})
+				end)
+
+				-- Alt+C toggles show content
+				map("i", "<A-c>", function()
+					opts.showContent = not opts.showContent
+					vim.api.nvim_echo({{'Show Content = '.. tostring(opts.showContent)}}, false, {})
 				end)
 
 				return true

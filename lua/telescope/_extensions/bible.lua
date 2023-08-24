@@ -9,7 +9,10 @@ M.bible = function(opts)
 		opts = {}
 	end
 
-	opts.isReferenceOnly = opts.isReferenceOnly or false
+	-- opts.showReference = opts.showReference or false
+	-- opts.showContent = opts.showContent or false
+	opts.showReference = true
+	opts.showContent = true
 	opts.isMultiSelect = opts.isMultiSelect or false
 	opts.isSecondVerse = opts.isSecondVerse or false
 
