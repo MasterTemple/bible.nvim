@@ -70,7 +70,6 @@ Hit `Alt+T` to edit Bible translation (not implemented yet) [current selection]
 
 ## Todo
 
-- Add color highlighting to the preview window
 - Ctrl/Shift/Alt+Enter for easier bindings to insert in different formats
 - Dynamically size the preview window
 - Allow user to specify format in setup like: `"{content} [{ref}]"` (options = `book`, `chapter`, `verse`, `ref`, `content`)

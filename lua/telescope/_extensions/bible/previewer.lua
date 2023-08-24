@@ -3,29 +3,6 @@ local Reference = require("telescope._extensions.bible.reference")
 
 local ns_id = vim.api.nvim_create_namespace("Highlights")
 
-local create_highlight_group = function(name, color)
-	local highlightAttributes = {
-			guifg = color, -- Set foreground color
-			guibg = "NONE",  -- Set background color
-			gui = "NONE",    -- Reset additional attributes
-	}
-	local attributesString = ""
-	for key, value in pairs(highlightAttributes) do
-			attributesString = attributesString .. key .. "=" .. value .. " "
-	end
-	local highlightGroupCommand = string.format("highlight %s %s", name, attributesString)
-	vim.api.nvim_command(highlightGroupCommand)
-end
-
-create_highlight_group("Bible.Keybind", "#c488ec")
-create_highlight_group("Bible.VerseNumber", "#f26e74")
-create_highlight_group("Bible.Translation", "#82c29c")
-create_highlight_group("Bible.True", "#82c29c")
-create_highlight_group("Bible.False", "#f26e74")
-create_highlight_group("Bible.Delimeters", "#79aaeb")
-create_highlight_group("Bible.FocusedVerse", "#edc28b")
-
-
 -- https://claude.ai/chat/5cb33a52-9e17-4e37-b686-7b373283ab76
 local highlight_text = function(bufnr, hl_group, pattern)
 	local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
@@ -47,7 +24,7 @@ local highlight_lines = function(bufnr, hl_group, startLine, endLine)
 	end
 end
 
-createBiblePreviewer = function(opts)
+local createBiblePreviewer = function(opts)
 	local title = "Scripture"
 	if opts.value then
 		title = opts.value .. " - "
@@ -64,16 +41,17 @@ createBiblePreviewer = function(opts)
 				ref = Reference:from_string(entry.value)
 			end
 			local lines = {}
-			if vim.g.showBibleSettings then
+			if opts.showBibleSettings then
+			-- if vim.g.showBibleSettings then
 				-- make true bg green and false bg red
 				-- add color to == and to values
 				-- set color of [ch:v]
 				lines = {
 					"==============================================================================",
 					"[Alt+T] Translation Used = English Standard Version (ESV)",
-					"[Alt+R] Insert Reference = " .. tostring(vim.g.insertReference),
-					"[Alt+C] Insert Content   = " .. tostring(vim.g.insertContent),
-					"[Alt+I] Add Indentation  = " .. tostring(vim.g.addIndent),
+					"[Alt+R] Insert Reference = " .. tostring(opts.insertReference),
+					"[Alt+C] Insert Content   = " .. tostring(opts.insertContent),
+					"[Alt+I] Add Indentation  = " .. tostring(opts.addIndent),
 					"==============================================================================",
 				}
 			end

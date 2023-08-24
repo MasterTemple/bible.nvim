@@ -13,7 +13,7 @@ local printVerses = function(opts, startVerse, endVerse)
 	-- set indentation to proper value
 	local ind = vim.fn.getline('.'):match("^%s+") or ""
 	local indent_type = vim.bo.expandtab and 'space' or 'tab'
-	if vim.g.addIndent then
+	if opts.addIndent then
 		if indent_type == 'space' then
 			local indent_size = vim.bo.shiftwidth
 			ind = ind .. string.rep(" ", indent_size)
@@ -31,7 +31,7 @@ local printVerses = function(opts, startVerse, endVerse)
 	local breakRef = endRef:next():ref()
 	local verses = {}
 	-- insert reference?
-	if vim.g.insertReference then
+	if opts.insertReference then
 		local refString = startRef:ref()
 		-- same
 		if startRef:ref() == endRef:ref() then
@@ -49,7 +49,7 @@ local printVerses = function(opts, startVerse, endVerse)
 		table.insert(verses, ind .. refString)
 	end
 	-- insert all verses
-	if vim.g.insertContent then
+	if opts.insertContent then
 		while startRef:ref() ~= breakRef do
 			-- table.insert(verses, startRef:inlinePrint())
 			table.insert(verses, ind .. startRef:inlinePrint())
@@ -161,29 +161,34 @@ local versePicker = function(opts, results)
 
 				-- Alt+R toggles show reference [global]
 				map("i", "<A-r>", function()
-					vim.g.insertReference = not vim.g.insertReference
-					vim.api.nvim_echo({{'Insert Reference = '.. tostring(vim.g.insertReference)}}, false, {})
+					opts.insertReference = not opts.insertReference
+					vim.api.nvim_echo({{'Insert Reference = '.. tostring(opts.insertReference)}}, false, {})
 					refreshPreview(prompt_bufnr)
 				end)
 
 				-- Alt+C toggles show content [global]
 				map("i", "<A-c>", function()
-					vim.g.insertContent = not vim.g.insertContent
-					vim.api.nvim_echo({{'Insert Content = '.. tostring(vim.g.insertContent)}}, false, {})
+					opts.insertContent = not opts.insertContent
+					vim.api.nvim_echo({{'Insert Content = '.. tostring(opts.insertContent)}}, false, {})
 					refreshPreview(prompt_bufnr)
 				end)
 
 				-- Alt+I toggles add indent [global]
 				map("i", "<A-i>", function()
-					vim.g.addIndent = not vim.g.addIndent
-					vim.api.nvim_echo({{'Add Indent = '.. tostring(vim.g.addIndent)}}, false, {})
+					opts.addIndent = not opts.addIndent
+					vim.api.nvim_echo({{'Add Indent = '.. tostring(opts.addIndent)}}, false, {})
 					refreshPreview(prompt_bufnr)
 				end)
 
 				-- Alt+S toggles settings in preview [global]
 				map("i", "<A-s>", function()
-					vim.g.showBibleSettings = not vim.g.showBibleSettings
-					vim.api.nvim_echo({{'Show Settings in Preview = '.. tostring(vim.g.showBibleSettings)}}, false, {})
+					opts.showBibleSettings = not opts.showBibleSettings
+					-- local showBibleSettings = vim.api.nvim_get_var("showBibleSettings") 
+					-- showBibleSettings = not showBibleSettings
+					-- vim.api.nvim_set_var("showBibleSettings", showBibleSettings) 
+
+					-- vim.api.nvim_echo({{'Show Settings in Preview = '.. tostring(showBibleSettings)}}, false, {})
+					vim.api.nvim_echo({{'Show Settings in Preview = '.. tostring(opts.showBibleSettings)}}, false, {})
 					refreshPreview(prompt_bufnr)
 				end)
 
