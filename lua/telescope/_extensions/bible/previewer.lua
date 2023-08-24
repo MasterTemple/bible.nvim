@@ -3,6 +3,29 @@ local Reference = require("telescope._extensions.bible.reference")
 
 local ns_id = vim.api.nvim_create_namespace("Highlights")
 
+local create_highlight_group = function(name, color)
+	local highlightAttributes = {
+			guifg = color, -- Set foreground color
+			guibg = "NONE",  -- Set background color
+			gui = "NONE",    -- Reset additional attributes
+	}
+	local attributesString = ""
+	for key, value in pairs(highlightAttributes) do
+			attributesString = attributesString .. key .. "=" .. value .. " "
+	end
+	local highlightGroupCommand = string.format("highlight %s %s", name, attributesString)
+	vim.api.nvim_command(highlightGroupCommand)
+end
+
+create_highlight_group("Bible.Keybind", "#c488ec")
+create_highlight_group("Bible.VerseNumber", "#f26e74")
+create_highlight_group("Bible.Translation", "#82c29c")
+create_highlight_group("Bible.True", "#82c29c")
+create_highlight_group("Bible.False", "#f26e74")
+create_highlight_group("Bible.Delimeters", "#79aaeb")
+create_highlight_group("Bible.FocusedVerse", "#edc28b")
+
+
 -- https://claude.ai/chat/5cb33a52-9e17-4e37-b686-7b373283ab76
 local highlight_text = function(bufnr, hl_group, pattern)
 	local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
@@ -90,13 +113,23 @@ createBiblePreviewer = function(opts)
 				cur = cur:next()
 			end
 			vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, lines)
-			highlight_text(self.state.bufnr, "Keyword", "%[Alt%+%a%]") -- [Alt+?]
-			highlight_text(self.state.bufnr, "Statement", "%[%d+:%d+%]") -- [1:1]
-			highlight_text(self.state.bufnr, "@symbol", "Translation Used = (.+)") -- = Translation (ABRV)
-			highlight_text(self.state.bufnr, "@symbol", "= (true)") -- = true
-			highlight_text(self.state.bufnr, "DiagnosticError", "= (false)") -- = false
-			highlight_text(self.state.bufnr, "@function.call", "=+") -- ======
-			highlight_lines(self.state.bufnr, "@text.uri", startLine, endLine) -- verse text
+
+			-- create_highlight_group("Bible.Keybind", "#c488ec")
+			-- create_highlight_group("Bible.VerseNumber", "#f26e74")
+			-- create_highlight_group("Bible.Translation", "#82c29c")
+			-- create_highlight_group("Bible.True", "#82c29c")
+			-- create_highlight_group("Bible.False", "#f26e74")
+			-- create_highlight_group("Bible.Delimeters", "#79aaeb")
+			-- create_highlight_group("Bible.FocusedVerse", "#edc28b")
+
+			highlight_text(self.state.bufnr, "Bible.Keybind", "%[Alt%+%a%]") -- [Alt+?]
+			highlight_text(self.state.bufnr, "Bible.VerseNumber", "%[%d+:%d+%]") -- [1:1]
+			highlight_text(self.state.bufnr, "Bible.Translation", "Translation Used = (.+)") -- = Translation (ABRV)
+			highlight_text(self.state.bufnr, "Bible.True", "= (true)") -- = true
+			highlight_text(self.state.bufnr, "Bible.False", "= (false)") -- = false
+			highlight_text(self.state.bufnr, "Bible.Delimeters", "=+") -- ======
+			highlight_lines(self.state.bufnr, "Bible.FocusedVerse", startLine, endLine) -- verse text
+
 		end,
 	})
 end
