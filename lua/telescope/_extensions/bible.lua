@@ -4,15 +4,17 @@ local versePicker = require('telescope._extensions.bible.picker')
 
 local M = {}
 
+vim.g.translation = "ESV"
+vim.g.showBibleSettings = true
+vim.g.insertReference = true
+vim.g.insertContent = true
+vim.g.addIndent = true
+
 M.bible = function(opts)
 	if opts == nil then
 		opts = {}
 	end
 
-	-- opts.showReference = opts.showReference or false
-	-- opts.showContent = opts.showContent or false
-	opts.showReference = true
-	opts.showContent = true
 	opts.isMultiSelect = opts.isMultiSelect or false
 	opts.isSecondVerse = opts.isSecondVerse or false
 

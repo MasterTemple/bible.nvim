@@ -28,6 +28,19 @@ createBiblePreviewer = function(opts)
 				ref = Reference:from_string(entry.value)
 			end
 			local lines = {}
+			if vim.g.showBibleSettings then
+				-- make true bg green and false bg red
+				-- add color to == and to values
+				-- set color of [ch:v]
+				lines = {
+					"==============================================================================",
+					"Translation      = English Standard Version (ESV)",
+					"Insert Reference = " .. tostring(vim.g.insertReference),
+					"Insert Content   = " .. tostring(vim.g.insertContent),
+					"Add Indent       = " .. tostring(vim.g.addIndent),
+					"==============================================================================",
+				}
+			end
 			local cur = ref
 			local context = 4
 			local width = 68 -- fix to make this dynamic

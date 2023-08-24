@@ -6,13 +6,15 @@ local Reference = require("telescope._extensions.bible.reference")
 
 local printVerses = function(opts, startVerse, endVerse)
 	-- set indentation to proper value
-	local ind = vim.fn.getline('.'):match("^%s+")
+	local ind = vim.fn.getline('.'):match("^%s+") or ""
 	local indent_type = vim.bo.expandtab and 'space' or 'tab'
-	if indent_type == 'space' then
-		local indent_size = vim.bo.shiftwidth
-		ind = ind .. string.rep(" ", indent_size) 
-	else
-		ind = ind .. "\t"
+	if vim.g.addIndent then
+		if indent_type == 'space' then
+			local indent_size = vim.bo.shiftwidth
+			ind = ind .. string.rep(" ", indent_size)
+		else
+			ind = ind .. "\t"
+		end
 	end
 
 	local startRef = Reference:from_string(startVerse)
@@ -24,7 +26,7 @@ local printVerses = function(opts, startVerse, endVerse)
 	local breakRef = endRef:next():ref()
 	local verses = {}
 	-- insert reference?
-	if opts.showReference then
+	if vim.g.insertReference then
 		local refString = startRef:ref()
 		-- same
 		if startRef:ref() == endRef:ref() then
@@ -42,7 +44,7 @@ local printVerses = function(opts, startVerse, endVerse)
 		table.insert(verses, ind .. refString)
 	end
 	-- insert all verses
-	if opts.showContent then
+	if vim.g.insertContent then
 		while startRef:ref() ~= breakRef do
 			-- table.insert(verses, startRef:inlinePrint())
 			table.insert(verses, ind .. startRef:inlinePrint())
@@ -76,9 +78,32 @@ local versePicker = function(opts, results)
 			sorter = conf.generic_sorter(opts),
 			previewer = createBiblePreviewer(opts),
 			attach_mappings = function(prompt_bufnr, map)
+				-- Shift+Enter
+				map("i", "<S-CR>", function()
+					-- Your handler
+					vim.api.nvim_echo({{"<S-CR>"}}, false, {})
+				end)
+				-- Disable any defaults that may conflict
+				map("i", "<C-CR>", nil) 
+				map("i", "<S-CR>", nil)
 
+				-- Alt+Enter: works
+				map("i", "<M-CR>", function()
+					-- Your handler 
+					vim.api.nvim_echo({{"<M-CR>"}}, false, {})
+				end)
+
+				-- Ctrl+Enter
+				map("i", "<C-CR>", function()
+					-- Your handler
+					vim.api.nvim_echo({{"<C-CR>"}}, false, {})
+				end)
 				-- Enter prints the content and the reference
 				map("i", "<CR>", function()
+					local mods = vim.fn.getcharmod
+					-- print(mods)
+					-- print(tostring(mods == "S"))
+					print(tostring(mods == "C"))
 					local selection = require("telescope.actions.state").get_selected_entry()
 					require("telescope.actions").close(prompt_bufnr)
 					local ref = Reference:from_string(selection.value)
@@ -102,10 +127,15 @@ local versePicker = function(opts, results)
 
 				-- Tab [saving this for later]
 				map("i", "<tab>", function()
+					vim.api.nvim_echo({{tostring(conf.win_config)}}, false, {})
 				end)
 
+				-------------------
+				-- CTRL COMMANDS --
+				-------------------
+
 				-- Ctrl+W prints whole chapter
-				map("i", "<A-w>", function()
+				map("i", "<C-w>", function()
 					local selection = require("telescope.actions.state").get_selected_entry()
 					require("telescope.actions").close(prompt_bufnr)
 					local ref = Reference:from_string(selection.value)
@@ -113,22 +143,38 @@ local versePicker = function(opts, results)
 					printVerses(opts, chapterReferences[1]:ref(), chapterReferences[#chapterReferences]:ref())
 				end)
 
-				-- Alt+M toggles multi-select
+				------------------
+				-- ALT COMMANDS --
+				------------------
+
+				-- Alt+M toggles multi-select [current selection]
 				map("i", "<A-m>", function()
 					opts.isMultiSelect = not opts.isMultiSelect
 					vim.api.nvim_echo({{'Multi-select = '.. tostring(opts.isMultiSelect)}}, false, {})
 				end)
 
-				-- Alt+R toggles show reference
+				-- Alt+R toggles show reference [global]
 				map("i", "<A-r>", function()
-					opts.showReference = not opts.showReference
-					vim.api.nvim_echo({{'Show Reference = '.. tostring(opts.showReference)}}, false, {})
+					vim.g.insertReference = not vim.g.insertReference
+					vim.api.nvim_echo({{'Insert Reference = '.. tostring(vim.g.insertReference)}}, false, {})
 				end)
 
-				-- Alt+C toggles show content
+				-- Alt+C toggles show content [global]
 				map("i", "<A-c>", function()
-					opts.showContent = not opts.showContent
-					vim.api.nvim_echo({{'Show Content = '.. tostring(opts.showContent)}}, false, {})
+					vim.g.insertContent = not vim.g.insertContent
+					vim.api.nvim_echo({{'Insert Content = '.. tostring(vim.g.insertContent)}}, false, {})
+				end)
+
+				-- Alt+I toggles add indent [global]
+				map("i", "<A-i>", function()
+					vim.g.addIndent = not vim.g.addIndent
+					vim.api.nvim_echo({{'Add Indent = '.. tostring(vim.g.addIndent)}}, false, {})
+				end)
+
+				-- Alt+S toggles settings in preview [global]
+				map("i", "<A-s>", function()
+					vim.g.showBibleSettings = not vim.g.showBibleSettings
+					vim.api.nvim_echo({{'Show Settings in Preview = '.. tostring(vim.g.showBibleSettings)}}, false, {})
 				end)
 
 				return true

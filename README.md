@@ -34,6 +34,10 @@ These can be remapped in the config above.
 
 Prefix the operation with `m` to make it `m`ulti-select (choose a start and end verse)
 
+`Alt+?` set an option but not run anything
+
+`Ctrl+?` runs on current selection
+
 ### Open Telescope Menu
 
 `<leader>es`: Search by verse content
@@ -44,17 +48,23 @@ Prefix the operation with `m` to make it `m`ulti-select (choose a start and end 
 
 `<leader>emr`: Search by verse reference (multi-select)
 
+`<leader>et`: Select translation (not implemented yet)
+
 ### In Telescope Menu
 
 Hit `Enter` to insert the content and the reference
 
-Hit `Alt+R` to insert the reference only
+Hit `Ctrl+W` to insert the whole chapter
 
-<!-- Hit `Alt+C` to insert the content only -->
+Hit `Alt+M` to toggle multi-select [current selection]
 
-Hit `Alt+W` to insert the whole chapter
+Hit `Alt+R` to toggle inserting reference [global: default = true]
 
-Hit `Alt+M` to toggle multi-select (only works on if you are choosing your first verse)
+Hit `Alt+C` to toggle inserting content [global: default = true]
+
+Hit `Alt+I` to toggle adding indent [global: default = true]
+
+Hit `Alt+S` to toggle showing settings in preview [global: default = true]
 
 ## Todo
 
