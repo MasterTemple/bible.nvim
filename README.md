@@ -2,7 +2,10 @@
 
 ## Purpose - Access Bible from within Neovim
 
+Brief demonstration [here](https://www.youtube.com/watch?v=K8dJbFDudbE)
+
 ![search_example.png](search_example.png)
+
 
 ## Setup
 
