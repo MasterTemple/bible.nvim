@@ -22,12 +22,12 @@ local printVerses = function(opts, startVerse, endVerse)
 		end
 	end
 
-	local startRef = Reference:from_string(startVerse)
+	local startRef = Reference:from_string(startVerse, string.lower(opts.translation))
 	if endVerse == nil then
 		endVerse = startVerse
 	end
 	-- endVerse = endVerse or startVerse
-	local endRef = Reference:from_string(endVerse)
+	local endRef = Reference:from_string(endVerse, string.lower(opts.translation))
 	local breakRef = endRef:next():ref()
 	local verses = {}
 	-- insert reference?
@@ -111,7 +111,7 @@ local versePicker = function(opts, results)
 					print(tostring(mods == "C"))
 					local selection = require("telescope.actions.state").get_selected_entry()
 					require("telescope.actions").close(prompt_bufnr)
-					local ref = Reference:from_string(selection.value)
+					local ref = Reference:from_string(selection.value, string.lower(opts.translation))
 
 					-- if is multi-select and needs to select second verse
 					if(opts.isMultiSelect and not opts.isSecondVerse) then
@@ -131,9 +131,9 @@ local versePicker = function(opts, results)
 				end)
 
 				-- Tab [saving this for later]
-				map("i", "<tab>", function()
-					vim.api.nvim_echo({{tostring(conf.win_config)}}, false, {})
-				end)
+				-- map("i", "<tab>", function()
+					-- vim.api.nvim_echo({{tostring(conf.win_config)}}, false, {})
+				-- end)
 
 				-------------------
 				-- CTRL COMMANDS --
@@ -143,7 +143,7 @@ local versePicker = function(opts, results)
 				map("i", "<C-w>", function()
 					local selection = require("telescope.actions.state").get_selected_entry()
 					require("telescope.actions").close(prompt_bufnr)
-					local ref = Reference:from_string(selection.value)
+					local ref = Reference:from_string(selection.value, string.lower(opts.translation))
 					local chapterReferences = ref:chapter()
 					printVerses(opts, chapterReferences[1]:ref(), chapterReferences[#chapterReferences]:ref())
 				end)
