@@ -25,6 +25,7 @@ local highlight_lines = function(bufnr, hl_group, startLine, endLine)
 end
 
 local createBiblePreviewer = function(opts)
+	print('DEBUGPRINT[1]: previewer.lua:27: opts=' .. vim.inspect(opts))
 	local title = "Scripture"
 	if opts.value then
 		title = opts.value .. " - "
@@ -36,9 +37,9 @@ local createBiblePreviewer = function(opts)
 			if entry.value:match("%[") then
 				local pattern = "%[(%d? ?[%a%s]+) (%d+):(%d+)%]"
 				local book, chapter, verse = entry.value:match(pattern)
-				ref = Reference:new(book, chapter, verse)
+				ref = Reference:new(book, chapter, verse, string.lower(opts.translation))
 			else
-				ref = Reference:from_string(entry.value)
+				ref = Reference:from_string(entry.value, opts.translation)
 			end
 			local lines = {}
 			if opts.showBibleSettings then
@@ -48,7 +49,7 @@ local createBiblePreviewer = function(opts)
 				-- set color of [ch:v]
 				lines = {
 					"==============================================================================",
-					"[Alt+T] Translation Used = English Standard Version (ESV)",
+					"[Alt+T] Translation Used = " .. tostring(opts.translation),
 					"[Alt+R] Insert Reference = " .. tostring(opts.insertReference),
 					"[Alt+C] Insert Content   = " .. tostring(opts.insertContent),
 					"[Alt+I] Add Indentation  = " .. tostring(opts.addIndent),

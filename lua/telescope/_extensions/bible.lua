@@ -25,8 +25,9 @@ M.bible = function(opts)
 		opts.addIndent = true
 	end
 	if opts.translation == nil then
-		opts.translation = "ESV"
+		opts.translation = "KJV"
 	end
+	print('DEBUGPRINT[1]: bible.lua:28: translation=' .. vim.inspect(opts.translation))
 	if opts.customHighlightMap == nil then
 		opts.customHighlightMap = {}
 	end
@@ -36,13 +37,13 @@ M.bible = function(opts)
 
 	local results
 	if opts.isReferenceOnly and opts.isSecondVerse then
-		results = searches:getAllReferencesAfter(opts.value)
+		results = searches:getAllReferencesAfter(opts.value, string.lower(opts.translation))
 	elseif opts.isReferenceOnly then
 		results = searches:getAllReferences()
 	elseif not opts.isReferenceOnly and opts.isSecondVerse then
-		results = searches:getAllVersesAfter(opts.value)
+		results = searches:getAllVersesAfter(opts.value, string.lower(opts.translation))
 	elseif not opts.isReferenceOnly then
-		results = searches:getAllVerses()
+		results = searches:getAllVerses(string.lower(opts.translation))
 	end
 
 	versePicker(opts, results)
