@@ -36,24 +36,28 @@ local createBiblePreviewer = function(opts)
 			if entry.value:match("%[") then
 				local pattern = "%[(%d? ?[%a%s]+) (%d+):(%d+)%]"
 				local book, chapter, verse = entry.value:match(pattern)
-				ref = Reference:new(book, chapter, verse)
+				ref = Reference:new(book, chapter, verse, string.lower(opts.translation))
 			else
-				ref = Reference:from_string(entry.value)
+				ref = Reference:from_string(entry.value, string.lower(opts.translation))
 			end
 			local lines = {}
 			if opts.showBibleSettings then
-			-- if vim.g.showBibleSettings then
+				-- if vim.g.showBibleSettings then
 				-- make true bg green and false bg red
 				-- add color to == and to values
 				-- set color of [ch:v]
 				lines = {
 					"==============================================================================",
-					"[Alt+T] Translation Used = English Standard Version (ESV)",
+					"[Alt+T] Translation Used = " .. string.upper(tostring(opts.translation)),
 					"[Alt+R] Insert Reference = " .. tostring(opts.insertReference),
 					"[Alt+C] Insert Content   = " .. tostring(opts.insertContent),
 					"[Alt+I] Add Indentation  = " .. tostring(opts.addIndent),
+					"[Alt+M] Multi-Select     = " .. tostring(opts.isMultiSelect),
 					"==============================================================================",
 				}
+				if opts.isMultiSelect and opts.isSecondVerse then
+					lines[6] = lines[6] .. "       The First Verse Selected " .. tostring(opts.value)
+				end
 			end
 			local cur = ref
 			local context = 4
@@ -100,14 +104,13 @@ local createBiblePreviewer = function(opts)
 			-- create_highlight_group("Bible.Delimeters", "#79aaeb")
 			-- create_highlight_group("Bible.FocusedVerse", "#edc28b")
 
-			highlight_text(self.state.bufnr, "Bible.Keybind", "%[Alt%+%a%]") -- [Alt+?]
-			highlight_text(self.state.bufnr, "Bible.VerseNumber", "%[%d+:%d+%]") -- [1:1]
+			highlight_text(self.state.bufnr, "Bible.Keybind", "%[Alt%+%a%]")              -- [Alt+?]
+			highlight_text(self.state.bufnr, "Bible.VerseNumber", "%[%d+:%d+%]")          -- [1:1]
 			highlight_text(self.state.bufnr, "Bible.Translation", "Translation Used = (.+)") -- = Translation (ABRV)
-			highlight_text(self.state.bufnr, "Bible.True", "= (true)") -- = true
-			highlight_text(self.state.bufnr, "Bible.False", "= (false)") -- = false
-			highlight_text(self.state.bufnr, "Bible.Delimeters", "=+") -- ======
-			highlight_lines(self.state.bufnr, "Bible.FocusedVerse", startLine, endLine) -- verse text
-
+			highlight_text(self.state.bufnr, "Bible.True", "= (true)")                    -- = true
+			highlight_text(self.state.bufnr, "Bible.False", "= (false)")                  -- = false
+			highlight_text(self.state.bufnr, "Bible.Delimeters", "=+")                    -- ======
+			highlight_lines(self.state.bufnr, "Bible.FocusedVerse", startLine, endLine)   -- verse text
 		end,
 	})
 end

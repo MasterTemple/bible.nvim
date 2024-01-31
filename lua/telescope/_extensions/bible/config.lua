@@ -1,8 +1,11 @@
-local home = os.getenv("HOME")
+local home = vim.fn.expand("$HOME")
 
-return  {
+local configPath = debug.getinfo(1).source:sub(2)
+local configDir = vim.fn.fnamemodify(configPath, ":h")
+
+return {
 	home = home,
-	plugin_dir = home .. "/.local/share/nvim/bible.nvim/",
-	code_dir = home .. "/.local/share/nvim/lazy/bible.nvim/lua/telescope/_extensions/bible/",
-	cache_dir = home .. "/.cache/nvim/bible.nvim/",
+	-- plugin_dir = debug.getinfo(1).source:sub(2),
+	code_dir = configDir .. "\\",
+	cache_dir = vim.fn.stdpath("data") .. "\\bible.nvim\\",
 }
