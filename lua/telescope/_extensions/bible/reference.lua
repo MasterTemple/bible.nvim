@@ -1,8 +1,9 @@
 local config = require("telescope._extensions.bible.config")
+local utils  = require("telescope._extensions.bible.utils")
 
 local json_string
 
-local file = io.open(config.code_dir .. "references.json", "r")
+local file   = io.open(config.code_dir .. "references.json", "r")
 if file == nil then
 	vim.api.nvim_echo({ { "Bible.nvim: References file not found" } }, false, {})
 else
@@ -37,15 +38,6 @@ end
 
 local Reference = {}
 
-local function indexOf(array, value)
-	for i, v in ipairs(array) do
-		if v == value then
-			return i
-		end
-	end
-	return nil
-end
-
 function Reference:new(bk, ch, v, translation)
 	local instance = {}
 	setmetatable(instance, { __index = Reference, __tostring = Reference.__tostring, __concat = Reference.__concat })
@@ -65,14 +57,6 @@ function Reference:from_string(str, translation)
 	if book and chapter and verse then
 		return Reference:new(book, tonumber(chapter), tonumber(verse), translation)
 	end
-end
-
-local function padleft(num, len)
-	local str = tostring(num)
-	while #str < len do
-		str = "0" .. str
-	end
-	return str
 end
 
 local function bibleBinarySearch(arr, val)
@@ -97,10 +81,7 @@ function Reference:get()
 	end
 	local content = ""
 	local id = self:id()
-	print('DEBUGPRINT[2]: reference.lua:97: id=' .. vim.inspect(id))
-	print('DEBUGPRINT[4]: reference.lua:105: translation=' .. vim.inspect(self.translation))
 	local verseIndex = bibleBinarySearch(bibles[self.translation].resultset.row, tonumber(id))
-	print('DEBUGPRINT[3]: reference.lua:99: verseIndex=' .. vim.inspect(verseIndex))
 	if verseIndex == nil then
 		return ""
 	end
@@ -108,7 +89,6 @@ function Reference:get()
 		return ""
 	end
 	content = bibles[self.translation].resultset.row[verseIndex].field[5]
-	print('DEBUGPRINT[4]: reference.lua:107: content=' .. vim.inspect(content))
 	if content == nil then
 		return ""
 	end
@@ -185,7 +165,6 @@ end
 
 function Reference:checkValidity()
 	-- book is invalid
-	vim.api.nvim_echo({ { self.bk } }, false, {})
 	local chapterList = referenceTable[self.bk]
 	if not chapterList then
 		return false
@@ -222,16 +201,17 @@ function Reference:print()
 end
 
 function Reference:verseLine()
-	return " [" .. self.ch .. ":" .. self.v .. "] " .. "(" .. string.upper(self.translation) .. ") " .. self.content:gsub("\n", " ")
+	return " [" ..
+	self.ch .. ":" .. self.v .. "] " .. "(" .. string.upper(self.translation) .. ") " .. self.content:gsub("\n", " ")
 	-- return  " [" .. self.v .. "] " .. self.content:gsub("\n", " ")
 end
 
 function Reference:__tostring()
-	return self.bk .. " " .. self.ch .. ":" .. self.v
+	return self.bk .. " " .. self.ch .. ":" .. self.v .. "(" .. string.upper(self.translation) .. ") "
 end
 
 function Reference:id()
-	return indexOf(bookList, self.bk) .. padleft(self.ch, 3) .. padleft(self.v, 3)
+	return utils:indexOf(bookList, self.bk) .. utils.hadleft(self.ch, 3) .. utils.padleft(self.v, 3)
 end
 
 function Reference:__concat(other)

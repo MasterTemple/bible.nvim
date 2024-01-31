@@ -64,7 +64,7 @@ M.getAllReferences = function(self)
 	return referencesList
 end
 
-M.getAllVerses = function(self, translation)
+M.getAllVerses = function(self,translation)
 	local file_path = config.cache_dir .. translation ..	 "-bible.txt"
 	local exists = os.rename(config.cache_dir, config.cache_dir)
 	if not exists then
@@ -113,13 +113,13 @@ M.getAllReferencesAfter = function(self, cur, translation)
 end
 
 M.getAllVersesAfter = function(self, cur, translation)
-	local master = Reference:from_string(cur)
-	local refs = self.getAllVerses(translation)
+	local master = Reference:from_string(cur, translation)
+	local refs = self:getAllVerses(translation)
 	local followingRefs = {}
 	local isPastRef = false
 	for _, r in ipairs(refs) do
 		if isPastRef then
-			local this = Reference:from_string(r)
+			local this = Reference:from_string(r, translation)
 			if master.bk ~= this.bk then
 				break
 			end
