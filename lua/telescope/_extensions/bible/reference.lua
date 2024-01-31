@@ -211,7 +211,7 @@ function Reference:__tostring()
 end
 
 function Reference:id()
-	return utils:indexOf(bookList, self.bk) .. utils.hadleft(self.ch, 3) .. utils.padleft(self.v, 3)
+	return utils:indexOf(bookList, self.bk) .. utils:padleft(self.ch, 3) .. utils:padleft(self.v, 3)
 end
 
 function Reference:__concat(other)
