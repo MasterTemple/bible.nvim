@@ -9,7 +9,30 @@ Brief demonstration [here](https://www.youtube.com/watch?v=K8dJbFDudbE)
 
 ## Setup
 
-**lazy.nvim**
+### lazy.nvim
+
+#### Install Plugin to Manage Libraries
+
+This ensures that `lsqlite3` and `dkjson` are both installed, which are required to use `bible.nvim`
+
+```lua
+{
+	"nvim-lua/plenary.nvim",
+	dependencies = {
+		{
+			"theHamsta/nvim_rocks",
+			build = "pip3 install --user hererocks && python3 -mhererocks . -j2.1.0-beta3 -r3.0.0 && cp nvim_rocks.lua lua",
+			config = function()
+				local nvim_rocks = require("nvim_rocks")
+				nvim_rocks.ensure_installed("lsqlite3")
+				nvim_rocks.ensure_installed("dkjson")
+			end,
+		},
+	},
+},
+```
+
+#### Install `bible.nvim` Plugin
 
 ```lua
 {
