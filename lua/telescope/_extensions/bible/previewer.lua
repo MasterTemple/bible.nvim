@@ -48,11 +48,11 @@ local createBiblePreviewer = function(opts)
 				-- set color of [ch:v]
 				lines = {
 					"==============================================================================",
-					"[Alt+T] Translation Used = " .. string.upper(tostring(opts.translation)),
-					"[Alt+R] Insert Reference = " .. tostring(opts.insertReference),
-					"[Alt+C] Insert Content   = " .. tostring(opts.insertContent),
-					"[Alt+I] Add Indentation  = " .. tostring(opts.addIndent),
-					"[Alt+M] Multi-Select     = " .. tostring(opts.isMultiSelect),
+					"[Leader+B+T] Translation Used = " .. string.upper(tostring(opts.translation)),
+					"[Leader+B+R] Insert Reference = " .. tostring(opts.insertReference),
+					"[Leader+B+C] Insert Content   = " .. tostring(opts.insertContent),
+					"[Leader+B+I] Add Indentation  = " .. tostring(opts.addIndent),
+					"[Leader+B+M] Multi-Select     = " .. tostring(opts.isMultiSelect),
 					"==============================================================================",
 				}
 				if opts.isMultiSelect and opts.isSecondVerse then

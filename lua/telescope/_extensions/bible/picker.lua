@@ -145,7 +145,7 @@ local versePicker          = function(opts, results)
 					-------------------
 
 					-- Ctrl+W prints whole chapter
-					map("i", "<C-w>", function()
+					map("i", "<leader>bw", function()
 						local selection = require("telescope.actions.state").get_selected_entry()
 						require("telescope.actions").close(prompt_bufnr)
 						local ref = Reference:from_string(selection.value, string.lower(opts.translation))
@@ -158,35 +158,35 @@ local versePicker          = function(opts, results)
 					------------------
 
 					-- Alt+M toggles multi-select [current selection]
-					map("i", "<A-m>", function()
+					map("i", "<leader>bm", function()
 						opts.isMultiSelect = not opts.isMultiSelect
 						vim.api.nvim_echo({ { 'Multi-select = ' .. tostring(opts.isMultiSelect) } }, false, {})
 						refreshPreview(prompt_bufnr)
 					end)
 
 					-- Alt+R toggles show reference [global]
-					map("i", "<A-r>", function()
+					map("i", "<leader>br", function()
 						opts.insertReference = not opts.insertReference
 						vim.api.nvim_echo({ { 'Insert Reference = ' .. tostring(opts.insertReference) } }, false, {})
 						refreshPreview(prompt_bufnr)
 					end)
 
 					-- Alt+C toggles show content [global]
-					map("i", "<A-c>", function()
+					map("i", "<leader>bc", function()
 						opts.insertContent = not opts.insertContent
 						vim.api.nvim_echo({ { 'Insert Content = ' .. tostring(opts.insertContent) } }, false, {})
 						refreshPreview(prompt_bufnr)
 					end)
 
 					-- Alt+I toggles add indent [global]
-					map("i", "<A-i>", function()
+					map("i", "<leader>bi", function()
 						opts.addIndent = not opts.addIndent
 						vim.api.nvim_echo({ { 'Add Indent = ' .. tostring(opts.addIndent) } }, false, {})
 						refreshPreview(prompt_bufnr)
 					end)
 
 					-- Alt+S toggles settings in preview [global]
-					map("i", "<A-s>", function()
+					map("i", "<leader>bs", function()
 						opts.showBibleSettings = not opts.showBibleSettings
 						-- local showBibleSettings = vim.api.nvim_get_var("showBibleSettings")
 						-- showBibleSettings = not showBibleSettings
@@ -198,7 +198,7 @@ local versePicker          = function(opts, results)
 					end)
 
 					-- Alt+T change Bible translation
-					map("i", "<A-t>", function()
+					map("i", "<leader>bt", function()
 						inSelectMode = true
 						vim.ui.select(opts.translations, { prompt = "Select Translation" }, function(choice)
 							if choice then
