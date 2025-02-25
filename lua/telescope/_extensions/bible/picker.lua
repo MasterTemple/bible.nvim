@@ -111,7 +111,7 @@ local versePicker          = function(opts, results)
 							local mods = vim.fn.getcharmod
 							-- print(mods)
 							-- print(tostring(mods == "S"))
-							print(tostring(mods == "C"))
+							-- print(tostring(mods == "C"))
 							local selection = require("telescope.actions.state").get_selected_entry()
 							require("telescope.actions").close(prompt_bufnr)
 							local ref = Reference:from_string(selection.value, string.lower(opts.translation))
@@ -120,7 +120,7 @@ local versePicker          = function(opts, results)
 							if (opts.isMultiSelect and not opts.isSecondVerse) then
 								opts.value = ref:ref()
 								opts.isSecondVerse = true
-								print('DEBUGPRINT[1]: picker.lua:123: opts=' .. vim.inspect(opts))
+								-- print('DEBUGPRINT[1]: picker.lua:123: opts=' .. vim.inspect(opts))
 								require("telescope").extensions.bible.bible(opts)
 								return
 							end
