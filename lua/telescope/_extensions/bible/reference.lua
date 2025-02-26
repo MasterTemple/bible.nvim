@@ -1,39 +1,78 @@
-local sqlite3 = require("lsqlite3")
 local config = require("telescope._extensions.bible.config")
-local db = sqlite3.open(config.code_dir .. "db/ESV.sqlite")
+local utils  = require("telescope._extensions.bible.utils")
 
-local json = require("dkjson")
+local json_string
 
-local file = io.open(config.code_dir .. "references.json", "r")
-local json_string = file:read("*a")
-file:close()
-local referenceTable = json.decode(json_string)
+local file   = io.open(config.code_dir .. "references.json", "r")
+if file == nil then
+	vim.api.nvim_echo({ { "Bible.nvim: References file not found" } }, false, {})
+else
+	json_string = file:read("*a")
+	file:close()
+end
+
+local referenceTable = vim.fn.json_decode(json_string)
 
 file = io.open(config.code_dir .. "books.json", "r")
-json_string = file:read("*a")
-file:close()
-local bookList = json.decode(json_string)
+if file == nil then
+	vim.api.nvim_echo({ { "Bible.nvim: Books file not found" } }, false, {})
+else
+	json_string = file:read("*a")
+	file:close()
+end
+local bookList = vim.fn.json_decode(json_string)
+local bibles = {}
+
+local files = vim.fn.glob(config.code_dir .. "json/t_*.json", false, true)
+for i, v in ipairs(files) do
+	local translation = v:match("t_(.+).json")
+	local f = io.open(v, "r")
+	if f == nil then
+		vim.api.nvim_echo({ { "Bible.nvim: T_" .. translation .. " file not found" } }, false, {})
+	else
+		json_string = f:read("*a")
+		f:close()
+		bibles[translation] = vim.fn.json_decode(json_string)
+	end
+end
 
 local Reference = {}
 
-function Reference:new(bk, ch, v)
+function Reference:new(bk, ch, v, translation)
 	local instance = {}
 	setmetatable(instance, { __index = Reference, __tostring = Reference.__tostring, __concat = Reference.__concat })
 	instance.bk = bk
 	instance.ch = tonumber(ch)
 	instance.v = tonumber(v)
+	instance.translation = translation
 	instance.isValid = instance:checkValidity()
 	instance.content = instance:get()
 	return instance
 end
 
-function Reference:from_string(str)
+function Reference:from_string(str, translation)
 	-- this is a simple match for a verse, it wont work for a lot of use cases
 	local pattern = "(%d? ?[%a%s]+) (%d+):(%d+)"
-  local book, chapter, verse = str:match(pattern)
-  if book and chapter and verse then
-    return Reference:new(book, tonumber(chapter), tonumber(verse))
-  end
+	local book, chapter, verse = str:match(pattern)
+	if book and chapter and verse then
+		return Reference:new(book, tonumber(chapter), tonumber(verse), translation)
+	end
+end
+
+local function bibleBinarySearch(arr, val)
+	local low = 1
+	local high = #arr
+	while low <= high do
+		local mid = math.floor((low + high) / 2)
+		if tonumber(arr[mid].field[1]) == val then
+			return mid
+		elseif tonumber(arr[mid].field[1]) < val then
+			low = mid + 1
+		else
+			high = mid - 1
+		end
+	end
+	return nil
 end
 
 function Reference:get()
@@ -41,30 +80,29 @@ function Reference:get()
 		return ""
 	end
 	local content = ""
-	for row in
-		db:nrows(
-			"SELECT content, chapter, verse FROM '"
-				.. self.bk
-				.. "' WHERE chapter="
-				.. self.ch
-				.. " AND verse="
-				.. self.v
-				.. " ORDER BY chapter, verse LIMIT 1"
-		)
-	do
-		content = row.content
+	local id = self:id()
+	local verseIndex = bibleBinarySearch(bibles[self.translation].resultset.row, tonumber(id))
+	if verseIndex == nil then
+		return ""
+	end
+	if bibles[self.translation] == nil then
+		return ""
+	end
+	content = bibles[self.translation].resultset.row[verseIndex].field[5]
+	if content == nil then
+		return ""
 	end
 	return content
 end
 
 function Reference:next()
 	-- increase verse
-	local ref = Reference:new(self.bk, self.ch, self.v + 1)
+	local ref = Reference:new(self.bk, self.ch, self.v + 1, self.translation)
 	if ref.isValid then
 		return ref
 	end
 	-- or increase ch
-	ref = Reference:new(self.bk, self.ch + 1, 1)
+	ref = Reference:new(self.bk, self.ch + 1, 1, self.translation)
 	if ref.isValid then
 		return ref
 	end
@@ -76,7 +114,7 @@ function Reference:next()
 			break
 		end
 	end
-	ref = Reference:new(nextBook, 1, 1)
+	ref = Reference:new(nextBook, 1, 1, self.translation)
 	if ref.isValid then
 		return ref
 	end
@@ -85,13 +123,13 @@ end
 
 function Reference:prev()
 	-- decrease verse
-	local ref = Reference:new(self.bk, self.ch, self.v - 1)
+	local ref = Reference:new(self.bk, self.ch, self.v - 1, self.translation)
 	if ref.isValid then
 		return ref
 	end
 	-- or decrease ch
 	local lastVerse = referenceTable[self.bk][self.ch - 1]
-	ref = Reference:new(self.bk, self.ch - 1, lastVerse)
+	ref = Reference:new(self.bk, self.ch - 1, lastVerse, self.translation)
 	if ref.isValid then
 		return ref
 	end
@@ -108,7 +146,7 @@ function Reference:prev()
 	end
 	local lastChapter = #(referenceTable[prevBook])
 	lastVerse = referenceTable[prevBook][lastChapter]
-	ref = Reference:new(prevBook, lastChapter, lastVerse)
+	ref = Reference:new(prevBook, lastChapter, lastVerse, self.translation)
 	if ref.isValid then
 		return ref
 	end
@@ -116,7 +154,7 @@ function Reference:prev()
 end
 
 function Reference:chapter()
-	local cur = Reference:new(self.bk, self.ch, 1)
+	local cur = Reference:new(self.bk, self.ch, 1, self.translation)
 	local refs = {}
 	while self.ch == cur.ch do
 		table.insert(refs, cur)
@@ -154,21 +192,26 @@ end
 
 function Reference:inlinePrint()
 	-- return self.content .. " [" .. self:ref() .. "]"
-	return "["  .. self.ch .. ":" .. self.v .. "] " .. self.content 
+	return "[" .. self.ch .. ":" .. self.v .. "] " .. "(" .. string.upper(self.translation) .. ") " .. self.content
 end
 
 function Reference:print()
 	-- return self.content .. " [" .. self:ref() .. "]"
-	return "[" .. self:ref() .. "] " .. self.content 
+	return "[" .. self:ref() .. "] " .. "(" .. string.upper(self.translation) .. ") " .. self.content
 end
 
 function Reference:verseLine()
-	return  " [" .. self.ch .. ":" .. self.v .. "] " .. self.content:gsub("\n", " ")
+	return " [" ..
+	self.ch .. ":" .. self.v .. "] " .. "(" .. string.upper(self.translation) .. ") " .. self.content:gsub("\n", " ")
 	-- return  " [" .. self.v .. "] " .. self.content:gsub("\n", " ")
 end
 
 function Reference:__tostring()
-	return self.bk .. " " .. self.ch .. ":" .. self.v
+	return self.bk .. " " .. self.ch .. ":" .. self.v .. "(" .. string.upper(self.translation) .. ") "
+end
+
+function Reference:id()
+	return utils:indexOf(bookList, self.bk) .. utils:padleft(self.ch, 3) .. utils:padleft(self.v, 3)
 end
 
 function Reference:__concat(other)
@@ -176,7 +219,7 @@ function Reference:__concat(other)
 end
 
 return Reference
--- local ref = Reference:new("1 John", 1, 1)
+-- local ref = Reference:new("1 John", 1, 1, "kjv")
 -- local nref = ref:next()
 -- local pref = ref:prev()
 -- print(ref)
